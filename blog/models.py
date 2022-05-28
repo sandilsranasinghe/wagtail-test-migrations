@@ -1,7 +1,9 @@
+from dataclasses import Field
 from django.db import models
 
 from wagtail.models import Page
-from wagtail.fields import RichTextField
+from wagtail.fields import RichTextField, StreamField
+from wagtail import blocks
 from wagtail.admin.panels import FieldPanel
 from wagtail.search import index
 
@@ -21,10 +23,25 @@ class BlogIndexPage(Page):
         return context
 
 
+class QuoteBlock(blocks.StructBlock):
+    quote_content = blocks.CharBlock()
+    person = blocks.CharBlock()
+    random_id = blocks.IntegerBlock(required=False)
+
+
+class SomeStructBlock(blocks.StructBlock):
+    random_content = blocks.CharBlock()
+    random_date = blocks.DateBlock()
+
+
 class BlogPage(Page):
-    date = models.DateField("Post date")
     intro = models.CharField(max_length=250)
     body = RichTextField(blank=True)
+    content = StreamField([
+        ("field1", blocks.CharBlock()),
+        ("quote",QuoteBlock()),
+        ("date", blocks.DateTimeBlock())
+    ])
 
     search_fields = Page.search_fields + [
         index.SearchField('intro'),
@@ -35,4 +52,5 @@ class BlogPage(Page):
         FieldPanel('date'),
         FieldPanel('intro'),
         FieldPanel('body', classname="full"),
+        FieldPanel('content')
     ]
