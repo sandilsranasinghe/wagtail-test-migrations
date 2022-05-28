@@ -41,7 +41,7 @@ class BlogPage(Page):
             ("quote", QuoteBlock()),
             ("date", blocks.DateTimeBlock()),
             ("someblock", SomeStructBlock()),
-        ]
+        ], blank=True
     )
 
     search_fields = Page.search_fields + [
