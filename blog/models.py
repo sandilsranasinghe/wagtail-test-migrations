@@ -37,7 +37,8 @@ class BlogPage(Page):
     body = RichTextField(blank=True)
     content = StreamField(
         [
-            ("field1", blocks.CharBlock()),
+            # change "field1" from CharBlock to a ListBlock of CharBlocks
+            ("field1", blocks.ListBlock(blocks.CharBlock())),
             ("quote", QuoteBlock()),
             ("date", blocks.DateTimeBlock()),
             ("someblock", SomeStructBlock()),
