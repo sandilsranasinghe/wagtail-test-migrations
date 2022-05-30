@@ -37,7 +37,11 @@ class BlogPage(Page):
     body = RichTextField(blank=True)
     content = StreamField(
         [
-            ("field1", blocks.CharBlock()),
+            # Block "field1" will be moved inside a StructBlock
+            # ("field1", blocks.CharBlock()),
+            ("struct1", blocks.StructBlock([
+                ("field1", blocks.CharBlock())
+            ])),
             ("quote", QuoteBlock()),
             ("date", blocks.DateTimeBlock()),
             ("someblock", SomeStructBlock()),
