@@ -3,10 +3,25 @@
 import json
 from django.db import migrations
 from wagtail.fields import StreamField
+# from wagtail.models import PageRevision 
+
+# TODO check stuff that was dropped. Also check corresponding model and methods for wagtail >= 3.0
+def get_specific(self, model_class):
+    specific_obj = model_class._default_manager.get(id=self.id)
+
+    exclude = ()
+    for k, v in ((k, v) for k, v in self.__dict__.items() if k not in exclude):
+        # only set values that haven't already been set
+        specific_obj.__dict__.setdefault(k, v)
+
+    return specific_obj
 
 
 def forward(apps, schema_editor):
     BlogPage = apps.get_model("blog", "BlogPage")
+    ContentType = apps.get_model("contenttypes", "ContentType")
+    PageRevision = apps.get_model("wagtailcore", "PageRevision")
+    contenttype_id = ContentType.objects.get(app_label="blog", model="blogpage").id
     model_field_name = "content"
     old_name = "field1"
     new_name = "block1"
@@ -14,41 +29,35 @@ def forward(apps, schema_editor):
     curr_field = BlogPage._meta.get_field(model_field_name)
     all_blocks = []
     for key, value in curr_field.stream_block.child_blocks.items():
+        path, args, kwargs = value.deconstruct()
         if key == new_name:
-            all_blocks.append((old_name, value.__class__()))
-            all_blocks.append((new_name, value.__class__()))
+            all_blocks.append((old_name, value.__class__(*args, **kwargs)))
+            all_blocks.append((new_name, value.__class__(*args, **kwargs)))
         else:
-            all_blocks.append((key, value.__class__()))
+            all_blocks.append((key, value.__class__(*args, **kwargs)))
     all_fields = StreamField(all_blocks)
     all_fields.contribute_to_class(BlogPage, model_field_name)
 
     # change the streamfield so that it has both blocks now
     schema_editor.alter_field(BlogPage, curr_field, all_fields)
 
-    for bp in BlogPage.objects.all():
-        for index, child in enumerate(getattr(bp, model_field_name)):
+    # for page in BlogPage.objects.all():
+    #     stream_blocks = getattr(page, model_field_name)
+    #     for index, child in enumerate(stream_blocks):
+    #         if child.block_type == old_name:
+    #             stream_blocks[index] = (new_name, child.value)
+    #     setattr(page, model_field_name, stream_blocks)
+    #     page.save()
+
+    # TODO change so that it's possible to update only the last couple of revisions 
+
+    for revision in PageRevision.objects.filter(page__content_type_id=contenttype_id):
+        as_page = get_specific(revision.page, BlogPage)
+        stream_blocks = getattr(as_page, model_field_name)
+        for index, child in enumerate(stream_blocks):
             if child.block_type == old_name:
-                getattr(bp, model_field_name)[index] = (new_name, child.value)
-        bp.save()
-
-        for revision in bp.revisions.all():
-            stream_data = []
-            mapped = False
-
-            for block in json.loads(revision.content["content"]):
-                if block["type"] == "field1":
-                    new_block = {}
-                    new_block["type"] = "block1"
-                    new_block["value"] = block["value"]
-                    stream_data.append(new_block)
-                    mapped = True
-
-                else:
-                    stream_data.append(block)
-
-            if mapped:
-                revision.content["content"] = json.dumps(stream_data)
-                revision.save()
+                stream_blocks[index] = (new_name, child.value)
+                print(child.block_type, ' - ', child.value)
 
     # change the streamfield back to how it was
     schema_editor.alter_field(BlogPage, all_fields, curr_field)
@@ -62,42 +71,26 @@ def backward(apps, schema_editor):
 
     curr_field = BlogPage._meta.get_field(model_field_name)
     all_blocks = []
-    for key, value in curr_field.clone().stream_block.child_blocks.items():
+    for key, value in curr_field.stream_block.child_blocks.items():
+        path, args, kwargs = value.deconstruct()
         if key == new_name:
-            all_blocks.append((old_name, value.__class__()))
-            all_blocks.append((new_name, value.__class__()))
+            all_blocks.append((old_name, value.__class__(*args, **kwargs)))
+            all_blocks.append((new_name, value.__class__(*args, **kwargs)))
         else:
-            all_blocks.append((key, value.__class__()))
+            all_blocks.append((key, value.__class__(*args, **kwargs)))
     all_fields = StreamField(all_blocks)
     all_fields.contribute_to_class(BlogPage, model_field_name)
 
     # change the streamfield so that it has both blocks now
     schema_editor.alter_field(BlogPage, curr_field, all_fields)
 
-    for bp in BlogPage.objects.all():
-        for index, child in enumerate(getattr(bp, model_field_name)):
-            if child.block_type == new_name:
-                getattr(bp, model_field_name)[index] = (old_name, child.value)
-        bp.save()
-
-        for revision in bp.revisions.all():
-            stream_data = []
-            mapped = False
-
-            for block in json.loads(revision.content["content"]):
-                if block["type"] == "block1":
-                    new_block = {}
-                    new_block["type"] = "field1"
-                    new_block["value"] = block["value"]
-                    stream_data.append(new_block)
-                    mapped = True
-
-                else:
-                    stream_data.append(block)
-
-            if mapped:
-                revision.content["content"] = json.dumps(stream_data)
-                revision.save()
+    # for page in BlogPage.objects.all():
+    #     stream_blocks = getattr(page, model_field_name)
+    #     for index, child in enumerate(stream_blocks):
+    #         if child.block_type == new_name:
+    #             stream_blocks[index] = (old_name, child.value)
+    #     setattr(page, model_field_name, stream_blocks)
+    #     page.save()
 
     # change the streamfield back to how it was
     schema_editor.alter_field(BlogPage, all_fields, curr_field)
@@ -110,5 +103,5 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.RunPython(forward, backward)
+        migrations.RunPython(forward, forward)
     ]
