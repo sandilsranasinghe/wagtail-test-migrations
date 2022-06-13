@@ -37,11 +37,12 @@ class BlogPage(Page):
     body = RichTextField(blank=True)
     content = StreamField(
         [
-            ("field1", blocks.CharBlock()),
+            # rename "field1" to "block1"
+            ("block1", blocks.CharBlock()),
             ("quote", QuoteBlock()),
             ("date", blocks.DateTimeBlock()),
             ("someblock", SomeStructBlock()),
-        ], blank=True
+        ], blank=True, use_json_field=True
     )
 
     search_fields = Page.search_fields + [
