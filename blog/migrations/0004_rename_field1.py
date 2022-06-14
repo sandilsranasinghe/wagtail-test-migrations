@@ -2,20 +2,19 @@
 
 import json
 from django.db import migrations
-from django.db.models import F, CharField
+from django.db.models import F, JSONField
 from django.db.models.functions import Cast
 from wagtail.blocks import StreamValue
-from wagtail.fields import StreamField
-from wagtail_streamfield_migration_toolkit.utils import hello_world
 
 def forward(apps, schema_editor):
     BlogPage = apps.get_model('blog', 'BlogPage')
     field_name = 'content'
 
     # Using an annotation to access the raw data (so that the blocks aren't filtered out). 
-    # The column had to be cast as a CharField, otherwise it gets converted into a StreamField.
-    for bp in BlogPage.objects.all().annotate(raw_content=Cast(F(field_name), CharField())):
-        blocks = json.loads(bp.raw_content)
+    # The column had to be cast as a JSONField, otherwise it gets converted into a StreamField.
+    for bp in BlogPage.objects.all().annotate(raw_content=Cast(F(field_name), JSONField())):
+        # blocks = json.loads(bp.raw_content)
+        blocks = bp.raw_content
 
         stream_data = []   
         mapped = False 
@@ -41,8 +40,8 @@ def backward(apps, schema_editor):
     BlogPage = apps.get_model('blog', 'BlogPage')
     field_name = 'content'
 
-    for bp in BlogPage.objects.all().annotate(raw_content=Cast(F(field_name), CharField())):
-        blocks = json.loads(bp.raw_content)
+    for bp in BlogPage.objects.all().annotate(raw_content=Cast(F(field_name), JSONField())):
+        blocks = bp.raw_content
 
         stream_data = []   
         mapped = False 
