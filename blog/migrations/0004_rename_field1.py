@@ -144,7 +144,9 @@ def forward(apps, schema_editor):
     BlogPage = apps.get_model("blog", "BlogPage")
     ContentType = apps.get_model("contenttypes", "ContentType")
     PageRevision = apps.get_model("wagtailcore", "PageRevision")
-    contenttype_id = ContentType.objects.get(app_label="blog", model="blogpage").id
+    contenttype_id = ContentType.objects.get_for_model(
+        apps.get_model("blog", "BlogPage")
+    )
     model_field_name = "content"
     old_name = "field1"
     new_name = "block1"
@@ -201,7 +203,9 @@ def backward(apps, schema_editor):
     BlogPage = apps.get_model("blog", "BlogPage")
     ContentType = apps.get_model("contenttypes", "ContentType")
     PageRevision = apps.get_model("wagtailcore", "PageRevision")
-    contenttype_id = ContentType.objects.get(app_label="blog", model="blogpage").id
+    contenttype_id = ContentType.objects.get_for_model(
+        apps.get_model("blog", "BlogPage")
+    )
     model_field_name = "content"
     old_name = "field1"
     new_name = "block1"
