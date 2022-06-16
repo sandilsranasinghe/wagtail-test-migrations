@@ -23,7 +23,8 @@ class BlogIndexPage(Page):
 
 class QuoteBlock(blocks.StructBlock):
     quote_content = blocks.CharBlock()
-    person = blocks.CharBlock()
+    # person = blocks.CharBlock() rename to author
+    author = blocks.CharBlock()
     random_id = blocks.IntegerBlock(required=False)
 
 
@@ -41,7 +42,7 @@ class BlogPage(Page):
             ("quote", QuoteBlock()),
             ("date", blocks.DateTimeBlock()),
             ("someblock", SomeStructBlock()),
-        ], blank=True
+        ], blank=True, use_json_field=True
     )
 
     search_fields = Page.search_fields + [
