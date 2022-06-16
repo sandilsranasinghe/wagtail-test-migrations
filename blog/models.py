@@ -38,7 +38,8 @@ class ImportantDatesBlock(blocks.StructBlock):
 
 
 class SomeStreamBlock(blocks.StreamBlock):
-    title = blocks.CharBlock()
+    # title = blocks.CharBlock() # change title to heading
+    heading = blocks.CharBlock()
     content = blocks.CharBlock()
 
 
