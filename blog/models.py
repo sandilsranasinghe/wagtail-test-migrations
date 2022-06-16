@@ -31,6 +31,16 @@ class SomeStructBlock(blocks.StructBlock):
     random_content = blocks.CharBlock()
     random_date = blocks.DateBlock(required=False)
 
+class ImportantDatesBlock(blocks.StructBlock):
+    name = blocks.CharBlock()
+    description = blocks.CharBlock(required=False)
+    date = blocks.DateBlock()
+
+
+class SomeStreamBlock(blocks.StreamBlock):
+    title = blocks.CharBlock()
+    content = blocks.CharBlock()
+
 
 class BlogPage(Page):
     intro = models.CharField(max_length=250)
@@ -41,6 +51,9 @@ class BlogPage(Page):
             ("quote", QuoteBlock()),
             ("date", blocks.DateTimeBlock()),
             ("someblock", SomeStructBlock()),
+            ("important_dates", ImportantDatesBlock()),
+            ("somestreamblock", SomeStreamBlock()),
+            ("hpcharacters", blocks.ListBlock(blocks.CharBlock())),
         ], blank=True, use_json_field=True
     )
 
