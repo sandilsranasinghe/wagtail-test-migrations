@@ -13,8 +13,8 @@ def forward(apps, schema_editor):
         field_name="content",
         block_path_str="field1",
         operation=RenameStreamChildrenOperation(new_name="block1"),
-        with_revisions=False,
-        revision_limit=None,
+        with_revisions=True,
+        revision_limit=1,
         chunk_size=1024
     )
 
