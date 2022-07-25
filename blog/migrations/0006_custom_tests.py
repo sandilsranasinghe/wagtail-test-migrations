@@ -24,8 +24,8 @@ class Migration(migrations.Migration):
             operations_and_block_paths=[
                 (RenameStreamChildrenOperation(new_name="block1"), "field1"),
                 (RenameStructChildrenOperation(new_name="author"), "quote.person")
-            ]
-            revisions_from=datetime.date(2022, 7, 24)
+            ],
+            revisions_from=datetime.date(2022, 7, 25)
         ),
         MigrateStreamData(
             app_name="blog",
@@ -34,8 +34,8 @@ class Migration(migrations.Migration):
             operations_and_block_paths=[
                 (RenameStreamChildrenOperation(new_name="block1"), "field1"),
                 (RenameStructChildrenOperation(new_name="author"), "quote.person")
-            ]
-            revisions_from=datetime.date(2022, 7, 24)
+            ],
+            revisions_from=datetime.date(2022, 7, 25)
         ),
         MigrateStreamData(
             app_name="blog",
@@ -44,7 +44,7 @@ class Migration(migrations.Migration):
             operations_and_block_paths=[
                 (RenameStreamChildrenOperation(new_name="block1"), "field1"),
                 (RenameStructChildrenOperation(new_name="author"), "quote.person")
-            ]
-            revisions_from=datetime.date(2022, 7, 24)
+            ],
+            revisions_from=datetime.date(2022, 7, 25)
         )
     ]
