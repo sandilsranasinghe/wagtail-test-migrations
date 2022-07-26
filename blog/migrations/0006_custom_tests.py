@@ -3,7 +3,7 @@
 from django.db import migrations
 import datetime
 
-from wagtail_streamfield_migration_toolkit.funcs import MigrateStreamData
+from wagtail_streamfield_migration_toolkit.migrate_operation import MigrateStreamData
 from wagtail_streamfield_migration_toolkit.operations import (
     RenameStreamChildrenOperation,
     RenameStructChildrenOperation,
