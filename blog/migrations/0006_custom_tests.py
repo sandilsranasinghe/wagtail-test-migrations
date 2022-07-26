@@ -22,8 +22,8 @@ class Migration(migrations.Migration):
             model_name="BlogPage",
             field_name="content",
             operations_and_block_paths=[
-                (RenameStreamChildrenOperation(new_name="block1"), "field1"),
-                (RenameStructChildrenOperation(new_name="author"), "quote.person")
+                (RenameStreamChildrenOperation(old_name="field1", new_name="block1"), ""),
+                (RenameStructChildrenOperation(old_name="person", new_name="author"), "quote")
             ],
             revisions_from=datetime.date(2022, 7, 25)
         ),
@@ -32,8 +32,8 @@ class Migration(migrations.Migration):
             model_name="SampleModel",
             field_name="stream_content",
             operations_and_block_paths=[
-                (RenameStreamChildrenOperation(new_name="block1"), "field1"),
-                (RenameStructChildrenOperation(new_name="author"), "quote.person")
+                (RenameStreamChildrenOperation(old_name="field1", new_name="block1"), ""),
+                (RenameStructChildrenOperation(old_name="person", new_name="author"), "quote")
             ],
             revisions_from=datetime.date(2022, 7, 25)
         ),
@@ -42,8 +42,8 @@ class Migration(migrations.Migration):
             model_name="SampleModelWithRevisions",
             field_name="stream_content",
             operations_and_block_paths=[
-                (RenameStreamChildrenOperation(new_name="block1"), "field1"),
-                (RenameStructChildrenOperation(new_name="author"), "quote.person")
+                (RenameStreamChildrenOperation(old_name="field1", new_name="block1"), ""),
+                (RenameStructChildrenOperation(old_name="person", new_name="author"), "quote")
             ],
             revisions_from=datetime.date(2022, 7, 25)
         )
